@@ -20734,12 +20734,6 @@ typedef struct VkVideoDecodeVP9PictureInfoKHR {
     uint32_t                              tilesOffset;
 } VkVideoDecodeVP9PictureInfoKHR;
 
-typedef struct VkVideoDecodeVP9DpbSlotInfoKHR {
-    VkStructureType                       sType;
-    void const*                           pNext;
-    StdVideoDecodeVP9ReferenceInfo const* pStdReferenceInfo;
-} VkVideoDecodeVP9DpbSlotInfoKHR;
-
 #ifdef __cplusplus
 }
 #endif
