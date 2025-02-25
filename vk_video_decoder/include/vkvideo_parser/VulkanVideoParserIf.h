@@ -320,6 +320,7 @@ struct VkParserAv1PictureData {
 
 typedef struct VkParserVp9PictureData {
 
+    VkVideoDecodeVP9PictureInfoKHR  khr_info;
     StdVideoDecodeVP9PictureInfo stdPictureInfo;
     StdVideoVP9ColorConfig       stdColorConfig;
     StdVideoVP9LoopFilter        stdLoopFilter;
