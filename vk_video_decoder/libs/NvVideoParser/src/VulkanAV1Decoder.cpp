@@ -1511,6 +1511,11 @@ void VulkanAV1Decoder::DecodeLoopRestorationData()
         }
     }
     pStd->flags.UsesLr = use_lr;
+
+#if 0
+    /* This causes a failure in AV1 decoding CTS tests.
+     * Need to check with Upstream developer.
+     */
     if (use_lr)  {
         int lr_unit_shift = 0;
         int sb_size = sps->flags.use_128x128_superblock == 1 /*BLOCK_128X128*/ ? 2 : 1; //128 : 64;
@@ -1545,6 +1550,32 @@ void VulkanAV1Decoder::DecodeLoopRestorationData()
     }
     pLoopRestoration->LoopRestorationSize[1] = pLoopRestoration->LoopRestorationSize[0] >> lr_uv_shift;
     pLoopRestoration->LoopRestorationSize[1] = pLoopRestoration->LoopRestorationSize[1] >> lr_uv_shift;
+#else
+    if (use_lr)  {
+       int lr_unit_shift = 0;
+       int lr_unit_extra_shift = 0;
+       int lr_uv_shift = 0;
+
+       if (sps->flags.use_128x128_superblock) {
+           lr_unit_shift = u(1) + 1;
+       } else {
+           lr_unit_shift = u(1);
+           if (lr_unit_shift) {
+               lr_unit_extra_shift = u(1);
+               lr_unit_shift += lr_unit_extra_shift;
+           }
+       }
+       const int RESTORATION_TILESIZE_MAX = 256;
+       pLoopRestoration->LoopRestorationSize[0] = RESTORATION_TILESIZE_MAX >> (2 - lr_unit_shift);
+       if (sps->color_config.subsampling_x && sps->color_config.subsampling_y && use_chroma_lr) {
+           lr_uv_shift = u(1);
+       } else {
+           lr_uv_shift = 0;
+       }
+       pLoopRestoration->LoopRestorationSize[1] = pLoopRestoration->LoopRestorationSize[0] >> lr_uv_shift;
+       pLoopRestoration->LoopRestorationSize[2] = pLoopRestoration->LoopRestorationSize[0] >> lr_uv_shift;
+   }
+#endif
 }
 
 int VulkanAV1Decoder::GetRelativeDist1(int a, int b)
