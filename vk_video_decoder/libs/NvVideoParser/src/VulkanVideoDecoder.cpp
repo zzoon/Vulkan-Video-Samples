@@ -216,14 +216,14 @@ bool VulkanVideoDecoder::more_rbsp_data()
     // or may not have been read yet (second check).
     // Note that the assumption that end() == false implies that there are more unread
     // non-zero bits is invalid for CABAC slices (because of cabac_zero_word). This is not
-    // a problem because more_rbsp_data is not used in CABAC slices. 
+    // a problem because more_rbsp_data is not used in CABAC slices.
     return (m_nalu.get_bfr << (m_nalu.get_bfroffs+1)) != 0 || !end();
 }
 
 uint32_t VulkanVideoDecoder::u(uint32_t n)
 {
     uint32_t bits = 0;
-    
+
     if (n > 0)
     {
         if (n + m_nalu.get_bfroffs <= 32)
@@ -269,7 +269,7 @@ int32_t VulkanVideoDecoder::se()
 {
     uint32_t eg = ue();  // Table 9-3
     int32_t codeNum;
-    
+
     if (eg & 1)
         codeNum = (int32_t)((eg>>1)+1);
     else
@@ -688,6 +688,7 @@ VkResult CreateVulkanVideoDecodeParser(VkVideoCodecOperationFlagBitsKHR videoCod
                                        const VkExtensionProperties* pStdExtensionVersion,
                                        nvParserLogFuncType pParserLogFunc, int logLevel,
                                        const VkParserInitDecodeParameters* pParserPictureData,
+                                       const bool isAnnexB,
                                        VkSharedBaseObj<VulkanVideoDecodeParser>& nvVideoDecodeParser)
 {
     gParserLogFunc = pParserLogFunc;
@@ -737,7 +738,7 @@ VkResult CreateVulkanVideoDecodeParser(VkVideoCodecOperationFlagBitsKHR videoCod
                     VK_STD_VULKAN_VIDEO_CODEC_AV1_DECODE_SPEC_VERSION, VK_STD_VULKAN_VIDEO_CODEC_AV1_DECODE_EXTENSION_NAME);
              return VK_ERROR_INCOMPATIBLE_DRIVER;
         }
-        nvVideoDecodeParser =  VkSharedBaseObj<VulkanAV1Decoder>(new VulkanAV1Decoder(videoCodecOperation));
+        nvVideoDecodeParser =  VkSharedBaseObj<VulkanAV1Decoder>(new VulkanAV1Decoder(videoCodecOperation, isAnnexB));
         break;
 #ifdef ENABLE_VP9_DECODER
     case VK_VIDEO_CODEC_OPERATION_DECODE_VP9_BIT_KHR:
