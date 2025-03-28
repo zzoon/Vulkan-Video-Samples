@@ -39,12 +39,8 @@ const char* VkVideoDecoder::GetVideoCodecString(VkVideoCodecOperationFlagBitsKHR
         { VK_VIDEO_CODEC_OPERATION_NONE_KHR, "None" },
         { VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR, "AVC/H.264" },
         { VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR, "H.265/HEVC" },
-#ifdef VK_EXT_video_decode_vp9
         { VK_VIDEO_CODEC_OPERATION_DECODE_VP9_BIT_KHR, "VP9" },
-#endif // VK_EXT_video_decode_vp9
-#ifdef vulkan_video_codec_av1std
         { VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR, "AV1" },
-#endif // VK_EXT_video_decode_av1
     };
 
     for (unsigned i = 0; i < sizeof(aCodecName) / sizeof(aCodecName[0]); i++) {
@@ -126,6 +122,7 @@ int32_t VkVideoDecoder::StartVideoSequence(VkParserDetectedVideoFormat* pVideoFo
             VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR
             | VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR
             | VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR
+            | VK_VIDEO_CODEC_OPERATION_DECODE_VP9_BIT_KHR
     );
     assert(videoCodecs != VK_VIDEO_CODEC_OPERATION_NONE_KHR);
 
@@ -956,7 +953,9 @@ int VkVideoDecoder::DecodePictureWithParameters(VkParserPerFrameDecodeParameters
     frameSynchronizationInfo.imageSpecsIndex = m_imageSpecsIndex;
 
     VkSharedBaseObj<VkVideoRefCountBase> currentVkPictureParameters;
-    if (m_videoFormat.codec == VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR) { // AV1
+    if (m_videoFormat.codec == VK_VIDEO_CODEC_OPERATION_DECODE_VP9_BIT_KHR) {
+        decodeBeginInfo.videoSessionParameters = VK_NULL_HANDLE;
+    } else if (m_videoFormat.codec == VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR) { // AV1
 
         bool valid = pCurrFrameDecParams->pStdSps->GetClientObject(currentVkPictureParameters);
         assert(valid);
