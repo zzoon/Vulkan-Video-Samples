@@ -19,7 +19,6 @@
 
 #include <vulkan_interfaces.h>
 #include "VkCodecUtils/VulkanDeviceContext.h"
-#include "VkCodecUtils/VulkanSamplerYcbcrConversion.h"
 
 class VulkanSamplerYcbcrConversion {
 
