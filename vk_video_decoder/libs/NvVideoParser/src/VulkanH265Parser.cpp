@@ -696,7 +696,7 @@ void VulkanH265Decoder::seq_parameter_set_rbsp()
 
     if (m_outOfBandPictureParameters && m_pClient) {
 
-        sps->SetSequenceCount(m_pParserData->spsClientUpdateCount[seq_parameter_set_id]++);
+        sps->SetSequenceCount(++m_pParserData->spsClientUpdateCount[seq_parameter_set_id]);
         VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(sps);
         bool success = m_pClient->UpdatePictureParameters(picParamObj, sps->client);
         assert(success);
@@ -890,7 +890,7 @@ void VulkanH265Decoder::pic_parameter_set_rbsp()
 
     if (m_outOfBandPictureParameters && m_pClient) {
 
-        pps->SetSequenceCount(m_pParserData->ppsClientUpdateCount[pic_parameter_set_id]++);
+        pps->SetSequenceCount(++m_pParserData->ppsClientUpdateCount[pic_parameter_set_id]);
         VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(pps);
         bool success = m_pClient->UpdatePictureParameters(picParamObj, pps->client);
         assert(success);
@@ -1070,7 +1070,7 @@ void VulkanH265Decoder::video_parameter_set_rbsp()
 
     if (m_outOfBandPictureParameters && m_pClient) {
 
-        vps->SetSequenceCount(m_pParserData->vpsClientUpdateCount[vps_video_parameter_set_id]++);
+        vps->SetSequenceCount(++m_pParserData->vpsClientUpdateCount[vps_video_parameter_set_id]);
         VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(vps);
         bool success = m_pClient->UpdatePictureParameters(picParamObj, vps->client);
         assert(success);

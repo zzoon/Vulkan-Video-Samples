@@ -1666,7 +1666,7 @@ int32_t VulkanH264Decoder::seq_parameter_set_rbsp(SpsNalUnitTarget spsNalUnitTar
     {
         if ((spsNalUnitTarget == SPS_NAL_UNIT_TARGET_SPS) && m_outOfBandPictureParameters && m_pClient) {
 
-            sps->SetSequenceCount(m_pParserData->spssClientUpdateCount[sps_id]++);
+            sps->SetSequenceCount(++m_pParserData->spssClientUpdateCount[sps_id]);
             VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(sps);
             bool success = m_pClient->UpdatePictureParameters(picParamObj, sps->client);
             assert(success);
@@ -1728,7 +1728,7 @@ bool VulkanH264Decoder::seq_parameter_set_svc_extension_rbsp()
     if (m_outOfBandPictureParameters && m_pClient) {
 
         assert(sps_id == m_last_sps_id);
-        spssvc->SetSequenceCount(m_pParserData->spssvcsClientUpdateCount[m_last_sps_id]++);
+        spssvc->SetSequenceCount(++m_pParserData->spssvcsClientUpdateCount[m_last_sps_id]);
         VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(spssvc);
         bool success = m_pClient->UpdatePictureParameters(picParamObj, spssvc->client);
         assert(success);
@@ -1835,7 +1835,7 @@ bool VulkanH264Decoder::seq_parameter_set_mvc_extension_rbsp(int32_t sps_id)
         assert(sps_id == m_last_sps_id);
         assert(m_spss[sps_id]);
 
-        m_spss[sps_id]->SetSequenceCount(m_pParserData->spsmesClientUpdateCount[sps_id]++);
+        m_spss[sps_id]->SetSequenceCount(++m_pParserData->spsmesClientUpdateCount[sps_id]);
         VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(m_spss[sps_id]);
         bool success = m_pClient->UpdatePictureParameters(picParamObj, m_spss[sps_id]->client);
         assert(success);
@@ -2154,7 +2154,7 @@ bool VulkanH264Decoder::pic_parameter_set_rbsp()
 
     if (m_outOfBandPictureParameters && m_pClient) {
 
-        pps->SetSequenceCount(m_pParserData->ppssClientUpdateCount[pps_id]++);
+        pps->SetSequenceCount(++m_pParserData->ppssClientUpdateCount[pps_id]);
         VkSharedBaseObj<StdVideoPictureParametersSet> picParamObj(pps);
         bool success = m_pClient->UpdatePictureParameters(picParamObj, pps->client);
         assert(success);
