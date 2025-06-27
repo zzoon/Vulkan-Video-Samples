@@ -317,6 +317,8 @@ private:
     VkSharedBaseObj<VulkanVideoSession>     m_videoSession;
     VkSharedBaseObj<VulkanVideoFrameBuffer> m_videoFrameBuffer;
     NvVkDecodeFrameData                     m_decodeFramesData;
+    VkDeviceSize                            m_minBitstreamBufferOffsetAlignment;
+    VkDeviceSize                            m_minBitstreamBufferSizeAlignment;
 
     uint64_t                                         m_decodePicCount; // Also used for the HW load balancing timeline semaphore
     VkSharedBaseObj<VkParserVideoPictureParameters>  m_currentPictureParameters;

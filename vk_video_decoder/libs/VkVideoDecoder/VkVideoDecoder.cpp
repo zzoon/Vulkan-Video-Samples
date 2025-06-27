@@ -177,6 +177,9 @@ int32_t VkVideoDecoder::StartVideoSequence(VkParserDetectedVideoFormat* pVideoFo
         assert(!"Could not get Video Capabilities!");
         return -1;
     }
+
+    m_minBitstreamBufferOffsetAlignment = videoCapabilities.minBitstreamBufferOffsetAlignment;
+    m_minBitstreamBufferSizeAlignment = videoCapabilities.minBitstreamBufferSizeAlignment;
     m_capabilityFlags = videoDecodeCapabilities.flags;
     m_dpbAndOutputCoincide = (m_capabilityFlags & VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR);
     VkFormat dpbImageFormat = VK_FORMAT_UNDEFINED;
@@ -706,10 +709,10 @@ int VkVideoDecoder::DecodePictureWithParameters(VkParserPerFrameDecodeParameters
     pCurrFrameDecParams->decodeFrameInfo.srcBuffer = pCurrFrameDecParams->bitstreamData->GetBuffer();
     //assert(pCurrFrameDecParams->bitstreamDataOffset == 0);
     assert(pCurrFrameDecParams->firstSliceIndex == 0);
-    // TODO: Assert if bitstreamDataOffset is aligned to VkVideoCapabilitiesKHR::minBitstreamBufferOffsetAlignment
-    pCurrFrameDecParams->decodeFrameInfo.srcBufferOffset = pCurrFrameDecParams->bitstreamDataOffset;
-    // TODO: Assert if bitstreamDataLen is aligned to VkVideoCapabilitiesKHR::minBitstreamBufferSizeAlignment
-    pCurrFrameDecParams->decodeFrameInfo.srcBufferRange =  pCurrFrameDecParams->bitstreamDataLen;
+
+#define ALIGN(value, n) (((value) + (n)-1) & ~((n)-1))
+    pCurrFrameDecParams->decodeFrameInfo.srcBufferOffset = ALIGN(pCurrFrameDecParams->bitstreamDataOffset, m_minBitstreamBufferOffsetAlignment);
+    pCurrFrameDecParams->decodeFrameInfo.srcBufferRange =  ALIGN(pCurrFrameDecParams->bitstreamDataLen, m_minBitstreamBufferSizeAlignment);
 
     VkVideoBeginCodingInfoKHR decodeBeginInfo = { VK_STRUCTURE_TYPE_VIDEO_BEGIN_CODING_INFO_KHR };
     decodeBeginInfo.pNext = pCurrFrameDecParams->beginCodingInfoPictureParametersExt;
