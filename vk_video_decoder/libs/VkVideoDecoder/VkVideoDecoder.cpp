@@ -159,13 +159,10 @@ int32_t VkVideoDecoder::StartVideoSequence(VkParserDetectedVideoFormat* pVideoFo
               << "\tNum Surfaces : " << numDecodeSurfaces << std::endl
               << "\tResize       : " << m_codedExtent.width << " x " << m_codedExtent.height << std::endl;
 
-    uint32_t maxDpbSlotCount = pVideoFormat->maxNumDpbSlots;
-
     assert(VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR == pVideoFormat->chromaSubsampling ||
            VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR == pVideoFormat->chromaSubsampling ||
            VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR == pVideoFormat->chromaSubsampling ||
            VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR == pVideoFormat->chromaSubsampling);
-
 
     VkVideoCapabilitiesKHR videoCapabilities;
     VkVideoDecodeCapabilitiesKHR videoDecodeCapabilities;
@@ -177,6 +174,8 @@ int32_t VkVideoDecoder::StartVideoSequence(VkParserDetectedVideoFormat* pVideoFo
         assert(!"Could not get Video Capabilities!");
         return -1;
     }
+
+    uint32_t maxDpbSlotCount = std::min<uint32_t>(pVideoFormat->maxNumDpbSlots, videoCapabilities.maxActiveReferencePictures);
 
     m_minBitstreamBufferOffsetAlignment = videoCapabilities.minBitstreamBufferOffsetAlignment;
     m_minBitstreamBufferSizeAlignment = videoCapabilities.minBitstreamBufferSizeAlignment;
