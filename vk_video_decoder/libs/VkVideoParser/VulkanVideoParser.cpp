@@ -134,6 +134,7 @@ struct nvVideoH265PicParameters {
     StdVideoDecodeH265PictureInfo stdPictureInfo;
     VkVideoDecodeH265PictureInfoKHR pictureInfo;
     VkVideoDecodeH265SessionParametersAddInfoKHR pictureParameters;
+    nvVideoDecodeH265DpbSlotInfo currentDpbSlotInfo;
     nvVideoDecodeH265DpbSlotInfo dpbRefList[MAX_REF_PICTURES_LIST_ENTRIES];
 };
 
@@ -171,6 +172,7 @@ struct nvVideoAV1PicParameters {
     StdVideoDecodeAV1PictureInfo stdPictureInfo; // memory for the pointer in pictureInfo
     VkVideoDecodeAV1PictureInfoKHR pictureInfo;
     VkVideoDecodeAV1SessionParametersCreateInfoKHR pictureParameters;
+    nvVideoDecodeAV1DpbSlotInfo currentDpbSlotInfo;
     nvVideoDecodeAV1DpbSlotInfo dpbRefList[nvVideoDecodeAV1DpbSlotInfo::TOTAL_REFS_PER_FRAME + 1];
 };
 
@@ -2312,6 +2314,9 @@ bool VulkanVideoParser::DecodePicture(
         }
         assert(!pd->ref_pic_flag || (setupReferenceSlot.slotIndex >= 0));
         if (setupReferenceSlot.slotIndex >= 0) {
+            nvVideoDecodeH264DpbSlotInfo *cur = &h264.currentDpbSlotInfo;
+            cur->Init(setupReferenceSlot.slotIndex);
+            setupReferenceSlot.pNext = &cur->dpbSlotInfo;
             setupReferenceSlot.pPictureResource = &pCurrFrameDecParams->dpbSetupPictureResource;
             pCurrFrameDecParams->decodeFrameInfo.pSetupReferenceSlot = &setupReferenceSlot;
 
@@ -2427,6 +2432,9 @@ bool VulkanVideoParser::DecodePicture(
 
         assert(!pd->ref_pic_flag || (setupReferenceSlot.slotIndex >= 0));
         if (setupReferenceSlot.slotIndex >= 0) {
+            nvVideoDecodeH265DpbSlotInfo *cur = &hevc.currentDpbSlotInfo;
+            cur->Init(setupReferenceSlot.slotIndex);
+            setupReferenceSlot.pNext = &cur->dpbSlotInfo;
             setupReferenceSlot.pPictureResource = &pCurrFrameDecParams->dpbSetupPictureResource;
             pCurrFrameDecParams->decodeFrameInfo.pSetupReferenceSlot = &setupReferenceSlot;
 
@@ -2505,6 +2513,9 @@ bool VulkanVideoParser::DecodePicture(
 
         assert(!pd->ref_pic_flag || (setupReferenceSlot.slotIndex >= 0));
         if (setupReferenceSlot.slotIndex >= 0) {
+            nvVideoDecodeAV1DpbSlotInfo *cur = &av1.currentDpbSlotInfo;
+            cur->Init(setupReferenceSlot.slotIndex);
+            setupReferenceSlot.pNext = &cur->dpbSlotInfo;
             setupReferenceSlot.pPictureResource = &pCurrFrameDecParams->dpbSetupPictureResource;
             pCurrFrameDecParams->decodeFrameInfo.pSetupReferenceSlot = &setupReferenceSlot;
 
