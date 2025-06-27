@@ -1103,6 +1103,7 @@ VkResult VulkanDeviceContext::InitVulkanDecoderDevice(const char * pAppName,
         VK_KHR_VIDEO_QUEUE_EXTENSION_NAME,
         VK_KHR_VIDEO_DECODE_QUEUE_EXTENSION_NAME,
         VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME,
+        VK_KHR_VIDEO_MAINTENANCE_1_EXTENSION_NAME,
         nullptr
     };
 
