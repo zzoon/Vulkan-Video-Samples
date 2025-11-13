@@ -792,8 +792,12 @@ VkResult VulkanDeviceContext::CreateVulkanDevice(int32_t numDecodeQueues,
                                                                             VK_FALSE
                                                                            };
 
+        VkPhysicalDeviceSamplerYcbcrConversionFeatures samplerYcbcrConversionFeatures { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES,
+                                                                                        &synchronization2Features,
+                                                                                        false
+                                                                                      };
         VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR intraRefreshFeatures { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_INTRA_REFRESH_FEATURES_KHR,
-                                                                                  &synchronization2Features,
+                                                                                  &samplerYcbcrConversionFeatures,
                                                                                   VK_FALSE
                                                                                 };
 
