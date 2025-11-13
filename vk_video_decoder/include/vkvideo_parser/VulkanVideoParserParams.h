@@ -51,6 +51,7 @@ struct VkParserPerFrameDecodeParameters {
     size_t bitstreamDataOffset; // bitstream data offset in bitstreamData buffer
     size_t bitstreamDataLen;   // Number of bytes in bitstream data buffer
     VkSharedBaseObj<VulkanBitstreamBuffer> bitstreamData; // bitstream data for this picture (slice-layer)
+    VkVideoBeginCodingInfoKHR decodeBeginInfo;
     VkVideoDecodeInfoKHR decodeFrameInfo;
     VkVideoPictureResourceInfoKHR dpbSetupPictureResource;
     uint32_t numGopReferenceSlots;

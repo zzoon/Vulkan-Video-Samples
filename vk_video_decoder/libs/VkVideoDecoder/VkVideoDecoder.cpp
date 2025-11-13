@@ -713,7 +713,7 @@ int VkVideoDecoder::DecodePictureWithParameters(VkParserPerFrameDecodeParameters
     pCurrFrameDecParams->decodeFrameInfo.srcBufferOffset = ALIGN(pCurrFrameDecParams->bitstreamDataOffset, m_minBitstreamBufferOffsetAlignment);
     pCurrFrameDecParams->decodeFrameInfo.srcBufferRange =  ALIGN(pCurrFrameDecParams->bitstreamDataLen, m_minBitstreamBufferSizeAlignment);
 
-    VkVideoBeginCodingInfoKHR decodeBeginInfo = { VK_STRUCTURE_TYPE_VIDEO_BEGIN_CODING_INFO_KHR };
+    VkVideoBeginCodingInfoKHR decodeBeginInfo = pCurrFrameDecParams->decodeBeginInfo;
     decodeBeginInfo.pNext = pCurrFrameDecParams->beginCodingInfoPictureParametersExt;
 
     decodeBeginInfo.videoSession = m_videoSession->GetVideoSession();
@@ -939,13 +939,6 @@ int VkVideoDecoder::DecodePictureWithParameters(VkParserPerFrameDecodeParameters
             }
         }
     }
-
-    // Add setup reference slot details to decodeBeginInfo
-    decodeBeginInfo.referenceSlotCount = pCurrFrameDecParams->decodeFrameInfo.referenceSlotCount +
-                                            (pCurrFrameDecParams->decodeFrameInfo.pSetupReferenceSlot ? 1 : 0);
-    decodeBeginInfo.pReferenceSlots = (pCurrFrameDecParams->decodeFrameInfo.referenceSlotCount > 0) ?
-                                            pCurrFrameDecParams->decodeFrameInfo.pReferenceSlots :
-                                            pCurrFrameDecParams->decodeFrameInfo.pSetupReferenceSlot;
 
     m_imageSpecsIndex.displayOut = ((m_dpbAndOutputCoincide == VK_TRUE) &&
                                     !(pDecodePictureInfo->flags.applyFilmGrain == VK_TRUE)) ?
